@@ -1,0 +1,9 @@
+c:\GitHub\C-Sharp-Projects\basic_game_engine\BasicGameEngine\BasicGameEngine\bin\Debug\BasicGameEngine.exe.config
+c:\GitHub\C-Sharp-Projects\basic_game_engine\BasicGameEngine\BasicGameEngine\bin\Debug\BasicGameEngine.exe
+c:\GitHub\C-Sharp-Projects\basic_game_engine\BasicGameEngine\BasicGameEngine\bin\Debug\BasicGameEngine.pdb
+c:\GitHub\C-Sharp-Projects\basic_game_engine\BasicGameEngine\BasicGameEngine\obj\Debug\BasicGameEngine.csprojResolveAssemblyReference.cache
+c:\GitHub\C-Sharp-Projects\basic_game_engine\BasicGameEngine\BasicGameEngine\obj\Debug\BasicGameEngine.gameForm.resources
+c:\GitHub\C-Sharp-Projects\basic_game_engine\BasicGameEngine\BasicGameEngine\obj\Debug\BasicGameEngine.Properties.Resources.resources
+c:\GitHub\C-Sharp-Projects\basic_game_engine\BasicGameEngine\BasicGameEngine\obj\Debug\BasicGameEngine.csproj.GenerateResource.Cache
+c:\GitHub\C-Sharp-Projects\basic_game_engine\BasicGameEngine\BasicGameEngine\obj\Debug\BasicGameEngine.exe
+c:\GitHub\C-Sharp-Projects\basic_game_engine\BasicGameEngine\BasicGameEngine\obj\Debug\BasicGameEngine.pdb
