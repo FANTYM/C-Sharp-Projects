@@ -43,7 +43,6 @@
             this.Text = "Basic Game Engine";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.gameForm_FormClosing);
             this.Load += new System.EventHandler(this.gameForm_Load);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.gameForm_Paint);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.gameForm_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.gameForm_KeyUp);
             this.ResumeLayout(false);

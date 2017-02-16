@@ -18,14 +18,15 @@ namespace BasicGameEngine
         [DllImport("kernel32.dll")]
         private static extern long GetTickCount();
 
-        private System.Drawing.Bitmap screenBuffer;
-        private System.Drawing.Bitmap[] gameGraphics;
+        private Bitmap screenBuffer;
+        private Dictionary <long, gameObject> gameObjects;
+        private Physics gamePhysics;
 
-        private System.Drawing.PointF screenCenter;
-        private System.Drawing.PointF cameraPos;
-        private System.Drawing.PointF shipPos;
-        private System.Drawing.PointF shipVel;
+        private PointF screenCenter;
+        private PointF cameraPos;
 
+        private gameObject playerShip;
+        
         private float gameTime = 0.0f;
         private float timePool = 0.0f;
         private float timeStep = 1.0f / 60.0f;
@@ -39,6 +40,10 @@ namespace BasicGameEngine
         private bool downPressed = false;
         private bool leftPressed = false;
         private bool rightPressed = false;
+
+        private long nextObjID = 0;
+
+        private System.Random random = new System.Random();
         
         private Graphics graphicsObject;
 
@@ -50,16 +55,25 @@ namespace BasicGameEngine
 
         private void gameForm_Load(object sender, EventArgs e)
         {
-            graphicsObject = this.CreateGraphics();
-            gameGraphics = new System.Drawing.Bitmap[1];
-            gameGraphics[0] = (Bitmap) Image.FromFile(@"Images\ship.png");
 
             screenBuffer = Image.FromHbitmap(new Bitmap(this.Width, this.Height).GetHbitmap());
 
-            shipPos = new System.Drawing.PointF(0.0f, 0.0f);
-            shipVel = new System.Drawing.PointF(0.0f, 0.0f);
             cameraPos = new System.Drawing.PointF(0.0f, 0.0f);
             screenCenter = new System.Drawing.PointF(this.Width * 0.5f, this.Height * 0.5f);
+            
+            graphicsObject = this.CreateGraphics();
+
+            gameObjects = new Dictionary<long, gameObject>();
+
+            gamePhysics = new Physics(ref gameObjects);
+
+            playerShip = createObject("player", @"Images\ship.png", new PointF(0.0f, 0.0f), new PointF(0.0f, 0.0f)) ;
+            
+            for (int i = 0; i < 100; i++)
+            {
+                int rndRoid = random.Next(1, 4);
+                createObject("asteroid" + i, @"Images\asteroid" + rndRoid + ".png", new PointF(random.Next(-500, 500), random.Next(-500, 500)), new PointF(0.0f, 0.0f));
+            }
 
             this.DoubleBuffered = true;
             this.SetStyle(ControlStyles.AllPaintingInWmPaint |
@@ -85,8 +99,9 @@ namespace BasicGameEngine
                     gameTime += timeStep;
                     timePool -= timeStep;
 
+                    gameInput();
                     gameUpdate();
-                    cameraPos = shipPos;
+                    cameraPos = playerShip.pos;
                     gameRender(Graphics.FromImage(screenBuffer));
 
                 }
@@ -100,16 +115,19 @@ namespace BasicGameEngine
             }
         }
 
-        private void gameUpdate()
+        private void gameInput()
         {
 
-            if (upPressed) shipVel.Y -= 30 * timeStep;
-            if (downPressed) shipVel.Y += 30 * timeStep;
-            if (leftPressed) shipVel.X -= 30 * timeStep;
-            if (rightPressed) shipVel.X += 30 * timeStep;
-            
-            shipPos.X += (shipVel.X * timeStep);
-            shipPos.Y += (shipVel.Y * timeStep);
+            if (upPressed) playerShip.AddVelocity(0, 10);
+            if (downPressed) playerShip.AddVelocity(0, -10);
+            if (leftPressed) playerShip.AddVelocity(10, 0);
+            if (rightPressed) playerShip.AddVelocity(-10, 0);
+
+        }
+
+        private void gameUpdate()
+        {
+            gamePhysics.runPhysics(timeStep);
             
         }
 
@@ -119,12 +137,31 @@ namespace BasicGameEngine
             g.Clear(Color.Black);
 
             System.Drawing.PointF drawPos = new PointF();
+            
+            foreach (KeyValuePair<long, gameObject> curPair in gameObjects)
+            {
 
-            drawPos.X = screenCenter.X + cameraPos.X - (shipPos.X + (gameGraphics[0].Width * 0.5f));
-            drawPos.Y = screenCenter.Y + cameraPos.Y - (shipPos.Y + (gameGraphics[0].Height * 0.5f));
+                drawPos.X = screenCenter.X + cameraPos.X - (curPair.Value.pos.X + (curPair.Value.Width * 0.5f));
+                drawPos.Y = screenCenter.Y + cameraPos.Y - (curPair.Value.pos.Y + (curPair.Value.Height * 0.5f));
 
-            g.DrawImage(gameGraphics[0], drawPos);
+                g.DrawImage(curPair.Value.objBitmap, drawPos);
 
+            }
+
+
+        }
+
+        private gameObject createObject(string objName, string objImageFileName, PointF objPos, PointF objVel)
+        {
+            long objID = nextObjID;
+
+            nextObjID++;
+
+            gameObject newObject = new gameObject(objID, objName, objImageFileName, objPos, objVel);
+
+            gameObjects.Add(objID, newObject);
+
+            return newObject;
 
         }
 
@@ -182,11 +219,5 @@ namespace BasicGameEngine
             gameRunning = false;
         }
 
-        private void gameForm_Paint(object sender, PaintEventArgs e)
-        {
-            
-            //gameRender(e.Graphics);
-            //System.Diagnostics.Debug.Print("painting");
-        }
     }
 }
